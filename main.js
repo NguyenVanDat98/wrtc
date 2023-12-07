@@ -74,13 +74,7 @@ audioButton.onclick=async(value)=>{
     pc.addTrack(track, localStream);
   });
 
-  pc.ontrack = (event) => {
-    event.streams[0].getTracks().forEach((track) => {
-      remoteStream.addTrack(track);
-    });
-  };
   webcamVideo.srcObject = localStream;
-  remoteVideo.srcObject = remoteStream;
 }
 // 2. Create an offer
 callButton.onclick = async () => {
@@ -110,12 +104,6 @@ callButton.onclick = async () => {
   // Listen for remote answer
   callDoc.onSnapshot((snapshot) => {
     const data = snapshot.data();
-
-    console.log('🚀 ---------------------------------------------------------🚀');
-    console.log('🚀 ~ file: main.js:114 ~ callDoc.onSnapshot ~ data:', data);
-    console.log('🚀 ---------------------------------------------------------🚀');
-
-    
     if (!pc.currentRemoteDescription && data?.answer) {
       const answerDescription = new RTCSessionDescription(data.answer);
       pc.setRemoteDescription(answerDescription);
