@@ -110,6 +110,12 @@ callButton.onclick = async () => {
   // Listen for remote answer
   callDoc.onSnapshot((snapshot) => {
     const data = snapshot.data();
+
+    console.log('🚀 ---------------------------------------------------------🚀');
+    console.log('🚀 ~ file: main.js:114 ~ callDoc.onSnapshot ~ data:', data);
+    console.log('🚀 ---------------------------------------------------------🚀');
+
+    
     if (!pc.currentRemoteDescription && data?.answer) {
       const answerDescription = new RTCSessionDescription(data.answer);
       pc.setRemoteDescription(answerDescription);
@@ -134,13 +140,7 @@ callButton.onclick = async () => {
 // 3. Answer the call with the unique ID
 answerButton.onclick = async () => {
   const callId = callInput.value;
-
-  console.log('🚀 ----------------------------------------------------------------🚀');
-  console.log('🚀 ~ file: main.js:138 ~ answerButton.onclick= ~ callId:', callId);
-  console.log('🚀 ----------------------------------------------------------------🚀');
-
   const callDoc = firestore.collection('calls').doc(callId);
-
 
   const answerCandidates = callDoc.collection('answerCandidates');
   const offerCandidates = callDoc.collection('offerCandidates');
@@ -150,11 +150,6 @@ answerButton.onclick = async () => {
   };
 
   const callData = (await callDoc.get()).data();
-
-  console.log('🚀 --------------------------------------------------------------------🚀');
-  console.log('🚀 ~ file: main.js:146 ~ answerButton.onclick= ~ callData:', callData);
-  console.log('🚀 --------------------------------------------------------------------🚀');
-
 
   const offerDescription = callData.offer;
   await pc.setRemoteDescription(new RTCSessionDescription(offerDescription));
@@ -173,15 +168,16 @@ answerButton.onclick = async () => {
     snapshot.docChanges().forEach((change) => {
       if (change.type === 'added') {
         let data = change.doc.data();
-        console.log(data.candidate);
-        pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+        pc.addIceCandidate(new RTCIceCandidate(data));
       }
     });
   });
 };
 
 getOffer.onclick =async()=>{
-  const dataCalls = (await firestore.collection('calls').doc().get()).data();
+  const dataCalls = (await firestore.collection('calls').get()).docs;
+  dataCalls.map((doc)=>{
+    console.log(doc.id,': ',doc.data())
+  })
  
-  console.log(dataCalls)
 }
